@@ -1,0 +1,33 @@
+PS 1  —  LLM GUARDRAILS / FIREWALL 
+Build an LLM input/output firewall and show where it breaks 
+
+OVERVIEW 
+Build a working guardrail layer that classifies any LLM prompt as safe or harmful, sits in front of a live LLM, and — the research part — run a structured red-team test to measure exactly where it passes, where it fails, and why. 
+Most guardrails are just keyword blocklists. This PS asks: can a lightweight CPU-friendly classifier do meaningfully better? You research and pick the right model approach, justify your choice, build the system, probe it, and honestly report the numbers. 
+
+MODEL CHOICE — YOUR RESEARCH DECISION 
+You are free to choose any lightweight classifier model that runs on CPU with low latency. This is itself a research decision and must be justified in your README. The model is central to this PS — not an afterthought.
+
+WHAT TO BUILD
+COMPONENT 1  —  PROMPT CLASSIFIER 
+A classifier that takes any text input and returns: 
+• A verdict: safe or unsafe 
+• A category: jailbreak, PII extraction, toxic content, or prompt injection 
+• A confidence score (0–1) 
+Track A: pass the input through your chosen pre-trained CPU model, get a classification score, threshold to decide safe/unsafe. Track B: pass the input through your trained model, return the softmax probability. Either way the output interface is identical — the caller does not need to know which track was used. 
+
+COMPONENT 2  —  CONFIGURABLE THRESHOLD 
+A single config value (or slider in your UI) that sets how strict the firewall is. A lower threshold blocks more — including more false positives. A higher threshold lets more through. This is the lever you will use in your research evaluation. 
+
+COMPONENT 3  —  RED-TEAM TEST SUITE 
+A set of 30 hand-crafted prompts across 3 attack categories, with ground-truth labels: 
+• 10 jailbreaks (e.g. role-play framing, DAN-style, hypothetical wrapping) 
+• 10 indirect injections (e.g. adversarial text hidden in a document the LLM is asked to summarise) 
+• 10 toxic/harmful prompts (e.g. self-harm, hate speech, dangerous instructions) 
+Also include 15 clearly benign prompts to measure your false positive rate. The full test suite must be committed to the repo as a JSON or CSV file with ground-truth labels. 
+
+COMPONENT 4  —  RESULTS DASHBOARD 
+A lightweight UI (Streamlit or similar) showing: 
+• Live: enter any prompt, see the verdict, category, and confidence score 
+• Aggregate view: blocked count, missed count, false positives, overall accuracy 
+• The accuracy vs. strictness curve: as threshold changes from 0.1 to 0.9, how does recall and false positive rate shift?
