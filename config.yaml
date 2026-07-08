@@ -1,0 +1,64 @@
+# LLM Guardrails Configuration
+# Adjust these values to control system behavior
+
+# Model Configuration
+model:
+  name: "distilbert-base-uncased"              # Base model from HuggingFace
+  framework: "transformers"                    # PyTorch-based
+  device: "cpu"                                # Use CPU (can change to 'cuda' if GPU available)
+  batch_size: 32                               # Batch size for inference
+  max_length: 512                              # Max token length for inputs
+
+# Threshold Configuration (main lever for strictness)
+threshold:
+  default: 0.5                                 # Default safety threshold (0.0-1.0)
+  # Lower threshold = stricter (blocks more, higher false positives)
+  # Higher threshold = lenient (lets more through, misses attacks)
+
+# Classification Categories
+categories:
+  - "safe"
+  - "jailbreak"
+  - "pii_extraction"
+  - "toxic_content"
+  - "prompt_injection"
+
+# File Paths
+paths:
+  models_dir: "./models"
+  data_dir: "./data"
+  output_dir: "./output"
+  test_suite: "./data/test_suite.csv"
+  trained_model: "./models/fine_tuned_model"
+
+# Evaluation Settings
+evaluation:
+  test_set_size: 45                            # Total test prompts
+  threshold_range: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]  # Thresholds to test
+  metrics:
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1_score"
+    - "false_positive_rate"
+
+# Streamlit UI Settings
+ui:
+  title: "LLM Guardrails Firewall"
+  description: "Classify prompts as safe or unsafe with configurable strictness"
+  theme: "light"                               # light or dark
+  max_input_length: 2000                       # Max characters for user input
+  show_confidence: true                        # Show confidence scores in UI
+
+# Logging
+logging:
+  level: "INFO"                                # DEBUG, INFO, WARNING, ERROR
+  log_file: "./output/guardrails.log"
+  log_to_console: true
+
+# Fine-tuning Settings (if retraining model)
+training:
+  epochs: 3
+  learning_rate: 2e-5
+  warmup_steps: 500
+  save_checkpoint: true
